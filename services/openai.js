@@ -24,11 +24,12 @@ const client = axios.create({
   timeout: config.OPENAI_TIMEOUT,
   headers: {
     'Accept-Encoding': 'gzip, deflate, compress',
+    'OpenAI-Beta': 'Assistants=v2',
   },
 });
 
 client.interceptors.request.use((c) => {
-  c.headers.Authorization = `Bearer ${config.OPENAI_API_KEY}`;
+  c.headers.Authorization = `Bearer ${config.OPENAI_API_KEY}`;  
   return handleRequest(c);
 });
 
