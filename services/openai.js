@@ -24,12 +24,12 @@ const client = axios.create({
   timeout: config.OPENAI_TIMEOUT,
   headers: {
     'Accept-Encoding': 'gzip, deflate, compress',
-    'OpenAI-Beta': 'Assistants=v2',
+    'OpenAI-Beta': 'Assistants=v2', // 新增標頭
   },
 });
 
 client.interceptors.request.use((c) => {
-  c.headers.Authorization = `Bearer ${config.OPENAI_API_KEY}`;  
+  c.headers.Authorization = `Bearer ${config.OPENAI_API_KEY}`;
   return handleRequest(c);
 });
 
@@ -46,6 +46,7 @@ const hasImage = ({ messages }) => (
   ))
 );
 
+// Chat Completion
 const createChatCompletion = ({
   model = config.OPENAI_COMPLETION_MODEL,
   messages,
@@ -62,9 +63,10 @@ const createChatCompletion = ({
     frequency_penalty: frequencyPenalty,
     presence_penalty: presencePenalty,
   };
-  return client.post('/v1/assistants', body);
+  return client.post('/v1/chat/completions', body);
 };
 
+// Image Generation
 const createImage = ({
   model = config.OPENAI_IMAGE_GENERATION_MODEL,
   prompt,
@@ -86,6 +88,7 @@ const createImage = ({
   });
 };
 
+// Audio Transcription
 const createAudioTranscriptions = ({
   buffer,
   file,
@@ -99,8 +102,23 @@ const createAudioTranscriptions = ({
   });
 };
 
+// Assistants API
+const createAssistant = ({
+  name,
+  description,
+  permissions = [],
+}) => {
+  const body = {
+    name,
+    description,
+    permissions,
+  };
+  return client.post('/v1/assistants', body);
+};
+
 export {
   createAudioTranscriptions,
   createChatCompletion,
   createImage,
+  createAssistant, // 新增導出方法
 };
